@@ -89,3 +89,27 @@ kubectl set resources deployment nginx-deployment -c=nginx --limits=cpu=200m,mem
 kubectl rollout resume deploy/nginx-deployment
 kubectl get rs -w
 ```
+
+StatefrulSet
+无法在本地测试，因为无法提供storageclass
+
+使用Job
+
+```sh
+kubectl create -f ./job_controller.yaml
+kbuectl get pods
+pods=$(kubectl get pods --selector=job-name=pi --output=jsonpath={.items..metadata.name})
+kubectl logs $pods
+```
+
+使用cronjob
+
+```sh
+kubectl create -f cronjob_controller.yaml 
+kubectl run hello --schedule="*/1 * * * *" --restart=OnFailure --image=busybox -- /bin/sh -c "date; echo Hello from the Kubernetes cluster"
+kubectl get cronjob
+kubectl get jobs --watch
+kubectl get pods
+kubectl logs hello-1533181680-rcdgm
+kubectl delete cronjob -f cronjob_controller.yaml
+```
